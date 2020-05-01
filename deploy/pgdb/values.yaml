@@ -1,0 +1,5 @@
+image:
+  repository: gcr.io/ajensen-1993/pgdb
+  pullPolicy: IfNotPresent
+  tag: ""
+

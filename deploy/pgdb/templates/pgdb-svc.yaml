@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: pgdb-svc
+spec:
+  type: ClusterIP
+  selector:
+    app: pgdb
+  ports:
+  - name: postgres
+    port: 5432
+    targetPort: 5432

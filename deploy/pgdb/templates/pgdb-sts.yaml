@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: pgdb-sts
+spec:
+  selector:
+    matchLabels:
+      app: pgdb
+  serviceName: 'pgdb'
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: pgdb
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: cloud.google.com/gke-preemptible
+                operator: NotIn
+                values: ["true"]
+      containers:
+      - name: pgdb
+        image: "{{ .Values.image.repository}}{{with .Values.image.tag}}:{{.}}{{end}}"
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 5432
+          hostPort: 5432
+          name: postgres
+        env:
+        - name: PGDATA
+          value: /var/lib/postgresql/data/pgdata
+        volumeMounts:
+        - name: pgdbdata-volume
+          mountPath: /var/lib/postgresql/data
+  volumeClaimTemplates:
+  - metadata:
+      name: pgdbdata-volume
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 32Gi

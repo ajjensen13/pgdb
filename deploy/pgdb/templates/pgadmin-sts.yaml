@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: pgadmin-sts
+spec:
+  selector:
+    matchLabels:
+      app: pgadmin
+  serviceName: pgadmin
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: pgadmin
+    spec:
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - preference:
+            - matchExpressions:
+              - key: cloud.google.com/gke-preemptible
+                operator: In
+                values: ["true"]
+            weight: 1
+      initContainers:
+      - name: pgadmin-volume-mount-hack
+        image: busybox
+        imagePullPolicy: IfNotPresent
+        command: ["sh", "-c", "chown -R 5050:5050 /var/lib/pgadmin"]
+        volumeMounts:
+        - name: pgadmin-working-volume
+          mountPath: /var/lib/pgadmin
+      containers:
+      - name: pgadmin
+        image: dpage/pgadmin4
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: PGADMIN_DEFAULT_EMAIL
+          value: jensen.aaro@gmail.com
+        - name: PGADMIN_DEFAULT_PASSWORD
+          value: changeit
+        volumeMounts:
+        - name: pgadmin-working-volume
+          mountPath: /var/lib/pgadmin
+  volumeClaimTemplates:
+  - metadata:
+      name: pgadmin-working-volume
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 4Gi
