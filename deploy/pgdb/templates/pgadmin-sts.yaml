@@ -17,7 +17,7 @@ spec:
         nodeAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
           - preference:
-            - matchExpressions:
+              matchExpressions:
               - key: cloud.google.com/gke-preemptible
                 operator: In
                 values: ["true"]
