@@ -19,8 +19,7 @@ spec:
             nodeSelectorTerms:
             - matchExpressions:
               - key: cloud.google.com/gke-preemptible
-                operator: NotIn
-                values: ["true"]
+                operator: DoesNotExist
       containers:
       - name: pgdb
         image: "{{ .Values.image.repository}}{{with .Values.image.tag}}:{{.}}{{end}}"
@@ -35,6 +34,10 @@ spec:
         volumeMounts:
         - name: pgdbdata-volume
           mountPath: /var/lib/postgresql/data
+        resources:
+          requests:
+            cpu: 250m
+            memory: 1Gi
   volumeClaimTemplates:
   - metadata:
       name: pgdbdata-volume
