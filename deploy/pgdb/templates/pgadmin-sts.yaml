@@ -41,6 +41,7 @@ spec:
         volumeMounts:
         - name: pgadmin-working-volume
           mountPath: /var/lib/pgadmin
+      priorityClassName: critical-preempting-pc
   volumeClaimTemplates:
   - metadata:
       name: pgadmin-working-volume
