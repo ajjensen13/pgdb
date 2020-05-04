@@ -19,8 +19,7 @@ spec:
           - preference:
               matchExpressions:
               - key: cloud.google.com/gke-preemptible
-                operator: In
-                values: ["true"]
+                operator: Exists
             weight: 1
       initContainers:
       - name: pgadmin-volume-mount-hack
