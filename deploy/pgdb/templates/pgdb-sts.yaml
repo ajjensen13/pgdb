@@ -20,10 +20,11 @@ spec:
             - matchExpressions:
               - key: cloud.google.com/gke-preemptible
                 operator: DoesNotExist
+      priorityClassName: required-preempting-pc
       containers:
       - name: pgdb
-        image: "{{ .Values.image.repository}}{{with .Values.image.tag}}:{{.}}{{end}}"
-        imagePullPolicy: IfNotPresent
+        image: "{{ .Values.pgdb.image.repository}}{{with .Values.pgdb.image.tag}}:{{.}}{{end}}"
+        imagePullPolicy: {{ .Values.pgdb.image.pullPolicy }}
         ports:
         - containerPort: 5432
           hostPort: 5432

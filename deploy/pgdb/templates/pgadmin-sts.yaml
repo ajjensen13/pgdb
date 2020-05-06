@@ -31,8 +31,8 @@ spec:
           mountPath: /var/lib/pgadmin
       containers:
       - name: pgadmin
-        image: dpage/pgadmin4
-        imagePullPolicy: IfNotPresent
+        image: {{ .Values.pgadmin.image.repository }}{{with .Values.pgadmin.image.tag}}:{{.}}{{end}}
+        imagePullPolicy: {{ .Values.pgadmin.image.pullPolicy }}
         env:
         - name: PGADMIN_DEFAULT_EMAIL
           value: jensen.aaro@gmail.com
@@ -41,7 +41,7 @@ spec:
         volumeMounts:
         - name: pgadmin-working-volume
           mountPath: /var/lib/pgadmin
-      priorityClassName: critical-preempting-pc
+      priorityClassName: normal-nonpreempting-pc
   volumeClaimTemplates:
   - metadata:
       name: pgadmin-working-volume

@@ -1,5 +1,11 @@
-image:
-  repository: gcr.io/ajensen-1993/pgdb
-  pullPolicy: IfNotPresent
-  tag: ""
+pgdb:
+  image:
+    repository: gcr.io/ajensen-1993/pgdb
+    tag: ""
+    pullPolicy: Always
 
+pgadmin:
+  image:
+    repository: dpage/pgadmin4
+    tag: ""
+    pullPolicy: Always
