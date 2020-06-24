@@ -23,7 +23,7 @@ spec:
       priorityClassName: required-preempting-pc
       containers:
       - name: pgdb
-        image: "{{ .Values.pgdb.image.repository }}{{ with .Values.pgdb.image.tag }}:{{ . }}{{ end }}"
+        image: "{{ .Values.pgdb.image.repository }}{{ with .Values.pgdb.image.tag }}:{{ . }}{{ end }}{{ with .Values.pgdb.image.digest }}@{{ . }}{{ end }}"
         imagePullPolicy: {{ .Values.pgdb.image.pullPolicy }}
         ports:
         - containerPort: 5432

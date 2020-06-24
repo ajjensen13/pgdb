@@ -2,7 +2,8 @@ pgdb:
   image:
     repository: gcr.io/ajensen-1993/pgdb
     tag: ""
-    pullPolicy: Always
+    pullPolicy: IfNotPresent
+    digest: ""
 
 pgadmin:
   image:
