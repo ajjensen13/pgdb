@@ -1,0 +1,28 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: pgbackup-cronjob
+spec:
+  schedule: "0 4 * * *"
+  concurrencyPolicy: Replace
+  jobTemplate:
+    spec:
+      backoffLimit: 1
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+          - name: pgbackup
+            image: "{{ .Values.pgdb.image.repository }}{{ with .Values.pgdb.image.tag }}:{{ . }}{{ end }}{{ with .Values.pgdb.image.digest }}@{{ . }}{{ end }}"
+            imagePullPolicy: {{ .Values.pgdb.image.pullPolicy }}
+            command: [ "pgdump_all", ">", "/var/backup/pgbackup" ]
+            volumeMounts:
+            - mountPath: /var/backup
+              name: pgbackup
+            envFrom:
+            - secretRef:
+                name: pgbackup-env-secret
+          volumes:
+          - name: pgbackup
+            persistentVolumeClaim:
+              claimName: pgbackup-pvc
