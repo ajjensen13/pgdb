@@ -1,11 +1,17 @@
+{{- if .Values.pgadmin.create }}
 apiVersion: v1
 kind: Service
 metadata:
   name: pgadmin-svc
+  labels:
+    helm.sh/chart: "{{ printf "%s-%s" .Chart.Name .Chart.Version }}"
+    app.kubernetes.io/name: pgadmin-svc
+    app.kubernetes.io/instance: {{ .Chart.AppVersion }}
 spec:
   type: ClusterIP
   selector:
-    app: pgadmin
+    app.kubernetes.io/name: pgadmin
+    app.kubernetes.io/instance: {{ .Chart.AppVersion }}
   ports:
   - port: 80
-    targetPort: 80
+{{- end }}

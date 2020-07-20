@@ -1,12 +1,28 @@
-pgdb:
+endpoint:
+  create: false
+  ip: null
+  port: 5432
+proxy:
+  create: false
+  instance_name: null
+  port: 5432
+  node_port: 32345
+local:
+  create: false
+  port: 5432
+  node_port: 32346
   image:
     repository: gcr.io/ajensen-1993/pgdb
     tag: ""
-    pullPolicy: IfNotPresent
     digest: ""
-
+    pullPolicy: IfNotPresent
+  host_auth_method: null
 pgadmin:
+  create: false
+  default_email: example@example.com
+  default_password: changeit
   image:
     repository: dpage/pgadmin4
     tag: ""
-    pullPolicy: Always
+    digest: ""
+    pullPolicy: IfNotPresent

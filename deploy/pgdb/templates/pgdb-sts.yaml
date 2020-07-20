@@ -1,37 +1,39 @@
+{{- if .Values.local.create }}
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: pgdb-sts
+  labels:
+    helm.sh/chart: "{{ printf "%s-%s" .Chart.Name .Chart.Version }}"
+    app.kubernetes.io/name: pgdb-sts
+    app.kubernetes.io/instance: {{ .Chart.AppVersion }}
 spec:
   selector:
     matchLabels:
-      app: pgdb
+      app.kubernetes.io/name: pgdb
+      app.kubernetes.io/instance: {{ .Chart.AppVersion }}
   serviceName: 'pgdb'
   replicas: 1
   template:
     metadata:
       labels:
-        app: pgdb
+        app.kubernetes.io/name: pgdb
+        app.kubernetes.io/instance: {{ .Chart.AppVersion }}
     spec:
-      affinity:
-        nodeAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            nodeSelectorTerms:
-            - matchExpressions:
-              - key: cloud.google.com/gke-preemptible
-                operator: DoesNotExist
       priorityClassName: required-preempting-pc
       containers:
       - name: pgdb
-        image: "{{ .Values.pgdb.image.repository }}{{ with .Values.pgdb.image.tag }}:{{ . }}{{ end }}{{ with .Values.pgdb.image.digest }}@{{ . }}{{ end }}"
-        imagePullPolicy: {{ .Values.pgdb.image.pullPolicy }}
+        image: "{{ .Values.local.image.repository }}{{ with .Values.local.image.tag }}:{{ . }}{{ end }}{{ with .Values.local.image.digest }}@{{ . }}{{ end }}"
+        imagePullPolicy: {{ .Values.local.image.pullPolicy }}
         ports:
-        - containerPort: 5432
-          hostPort: 5432
-          name: postgres
+        - containerPort: {{ .Values.local.port }}
         env:
         - name: PGDATA
           value: /var/lib/postgresql/data/pgdata
+        {{- with .Values.local.host_auth_method }}
+        - name: POSTGRES_HOST_AUTH_METHOD
+          value: {{ . }}
+        {{- end }}
         volumeMounts:
         - name: pgdbdata-volume
           mountPath: /var/lib/postgresql/data
@@ -47,3 +49,4 @@ spec:
       resources:
         requests:
           storage: 32Gi
+{{- end }}

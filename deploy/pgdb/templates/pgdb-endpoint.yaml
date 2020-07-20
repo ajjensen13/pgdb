@@ -1,0 +1,15 @@
+{{- if .Values.endpoint.create }}
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: pgdb-svc
+  labels:
+    helm.sh/chart: "{{ printf "%s-%s" .Chart.Name .Chart.Version }}"
+    app.kubernetes.io/name: pgdb-svc
+    app.kubernetes.io/instance: {{ .Chart.AppVersion }}
+subsets:
+- addresses:
+  - ip: {{ .Values.endpoint.ip }}
+  ports:
+  - port: {{ .Values.endpoint.port }}
+{{- end }}

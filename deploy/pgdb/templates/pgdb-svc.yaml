@@ -2,11 +2,31 @@ apiVersion: v1
 kind: Service
 metadata:
   name: pgdb-svc
+  labels:
+    helm.sh/chart: "{{ printf "%s-%s" .Chart.Name .Chart.Version }}"
+    app.kubernetes.io/name: pgdb-svc
+    app.kubernetes.io/instance: {{ .Chart.AppVersion }}
 spec:
-  type: ClusterIP
+  {{- if .Values.proxy.create }}
+  type: NodePort
   selector:
-    app: pgdb
+    app.kubernetes.io/name: cloudsqlproxy
+    app.kubernetes.io/instance: {{ .Chart.AppVersion }}
   ports:
-  - name: postgres
-    port: 5432
-    targetPort: 5432
+  - port: {{ .Values.proxy.port }}
+    nodePort: {{ .Values.proxy.node_port }}
+  {{- end }}
+  {{- if .Values.local.create }}
+  type: NodePort
+  selector:
+    app.kubernetes.io/name: pgdb
+    app.kubernetes.io/instance: {{ .Chart.AppVersion }}
+  ports:
+  - port: {{ .Values.local.port }}
+    nodePort: {{ .Values.local.node_port }}
+  {{- end }}
+  {{- if .Values.endpoint.create }}
+  type: ClusterIP
+  ports:
+  - port: {{ .Values.endpoint.port }}
+  {{- end }}

@@ -1,0 +1,44 @@
+{{- if .Values.proxy.create }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cloudsqlproxy-deploy
+  labels:
+    helm.sh/chart: "{{ printf "%s-%s" .Chart.Name .Chart.Version }}"
+    app.kubernetes.io/name: cloudsqlproxy-deploy
+    app.kubernetes.io/instance: {{ .Chart.AppVersion }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: cloudsqlproxy
+      app.kubernetes.io/instance: {{ .Chart.AppVersion }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: cloudsqlproxy
+        app.kubernetes.io/instance: {{ .Chart.AppVersion }}
+    spec:
+      containers:
+      - name: cloudsqlproxy
+        image: gcr.io/cloudsql-docker/gce-proxy:1.17
+        imagePullPolicy: IfNotPresent
+        command:
+        - /cloud_sql_proxy
+        - -instances
+        - "{{ .Values.proxy.instance_name }}=tcp:0.0.0.0:{{ .Values.proxy.port }}"
+        ports:
+        - containerPort: {{ .Values.proxy.port }}
+        volumeMounts:
+        - mountPath: /etc/config
+          name: config-volume
+        env:
+        - name: GOOGLE_APPLICATION_CREDENTIALS
+          value: /etc/config/google_application_credentials.json
+      volumes:
+      - name: config-volume
+        projected:
+          sources:
+          - secret:
+              name: cloudsqlproxy-google-application-credentials-secret
+{{- end }}

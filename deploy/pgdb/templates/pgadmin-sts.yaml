@@ -1,26 +1,25 @@
+{{- if .Values.pgadmin.create }}
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: pgadmin-sts
+  labels:
+    helm.sh/chart: "{{ printf "%s-%s" .Chart.Name .Chart.Version }}"
+    app.kubernetes.io/name: pgadmin-sts
+    app.kubernetes.io/instance: {{ .Chart.AppVersion }}
 spec:
   selector:
     matchLabels:
-      app: pgadmin
+      app.kubernetes.io/name: pgadmin
+      app.kubernetes.io/instance: {{ .Chart.AppVersion }}
   serviceName: pgadmin
   replicas: 1
   template:
     metadata:
       labels:
-        app: pgadmin
+        app.kubernetes.io/name: pgadmin
+        app.kubernetes.io/instance: {{ .Chart.AppVersion }}
     spec:
-      affinity:
-        nodeAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-          - weight: 1
-            preference:
-              matchExpressions:
-              - key: cloud.google.com/gke-preemptible
-                operator: Exists
       initContainers:
       - name: pgadmin-volume-mount-hack
         image: busybox
@@ -31,17 +30,27 @@ spec:
           mountPath: /var/lib/pgadmin
       containers:
       - name: pgadmin
-        image: {{ .Values.pgadmin.image.repository }}{{with .Values.pgadmin.image.tag}}:{{.}}{{end}}
+        image: "{{ .Values.pgadmin.image.repository }}{{ with .Values.pgadmin.image.tag }}:{{ . }}{{ end }}{{ with .Values.pgadmin.image.digest }}@{{ . }}{{ end }}"
         imagePullPolicy: {{ .Values.pgadmin.image.pullPolicy }}
+        ports:
+        - containerPort: 80
         env:
         - name: PGADMIN_DEFAULT_EMAIL
-          value: jensen.aaro@gmail.com
+          value: {{ .Values.pgadmin.default_email }}
         - name: PGADMIN_DEFAULT_PASSWORD
-          value: changeit
+          value: {{ .Values.pgadmin.default_password }}
         volumeMounts:
         - name: pgadmin-working-volume
           mountPath: /var/lib/pgadmin
       priorityClassName: normal-nonpreempting-pc
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 1
+            preference:
+              matchExpressions:
+              - key: cloud.google.com/gke-preemptible
+                operator: Exists
   volumeClaimTemplates:
   - metadata:
       name: pgadmin-working-volume
@@ -50,3 +59,4 @@ spec:
       resources:
         requests:
           storage: 4Gi
+{{- end }}
