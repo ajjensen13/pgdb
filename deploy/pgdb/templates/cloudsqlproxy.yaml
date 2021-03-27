@@ -3,6 +3,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: cloudsqlproxy-deploy
+  namespace: cloudsqlproxy
   labels:
     helm.sh/chart: "{{ printf "%s-%s" .Chart.Name .Chart.Version }}"
     app.kubernetes.io/name: cloudsqlproxy-deploy
@@ -29,6 +30,7 @@ spec:
         - "{{ .Values.proxy.instance_name }}=tcp:0.0.0.0:{{ .Values.proxy.port }}"
         ports:
         - containerPort: {{ .Values.proxy.port }}
+          name: cloudsqlproxy
         volumeMounts:
         - mountPath: /etc/config
           name: config-volume

@@ -34,6 +34,7 @@ spec:
         imagePullPolicy: {{ .Values.pgadmin.image.pullPolicy }}
         ports:
         - containerPort: 80
+          name: http
         env:
         - name: PGADMIN_DEFAULT_EMAIL
           value: {{ .Values.pgadmin.default_email }}

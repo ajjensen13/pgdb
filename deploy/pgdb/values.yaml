@@ -5,12 +5,10 @@ endpoint:
 proxy:
   create: false
   instance_name: null
-  port: 5432
-  node_port: 32345
+  port: 32345
 local:
   create: false
-  port: 5432
-  node_port: 32346
+  port: 32346
   image:
     repository: gcr.io/ajensen-1993/pgdb
     tag: ""
@@ -21,6 +19,7 @@ pgadmin:
   create: false
   default_email: example@example.com
   default_password: changeit
+  port: 32347
   image:
     repository: dpage/pgadmin4
     tag: ""

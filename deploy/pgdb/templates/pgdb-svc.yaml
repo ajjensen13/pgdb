@@ -8,22 +8,22 @@ metadata:
     app.kubernetes.io/instance: {{ .Chart.AppVersion }}
 spec:
   {{- if .Values.proxy.create }}
-  type: NodePort
+  type: LoadBalancer
   selector:
     app.kubernetes.io/name: cloudsqlproxy
     app.kubernetes.io/instance: {{ .Chart.AppVersion }}
   ports:
   - port: {{ .Values.proxy.port }}
-    nodePort: {{ .Values.proxy.node_port }}
+    targetPort: cloudsqlproxy
   {{- end }}
   {{- if .Values.local.create }}
-  type: NodePort
+  type: LoadBalancer
   selector:
     app.kubernetes.io/name: pgdb
     app.kubernetes.io/instance: {{ .Chart.AppVersion }}
   ports:
   - port: {{ .Values.local.port }}
-    nodePort: {{ .Values.local.node_port }}
+    targetPort: pgsql
   {{- end }}
   {{- if .Values.endpoint.create }}
   type: ClusterIP

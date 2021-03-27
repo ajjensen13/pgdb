@@ -26,7 +26,8 @@ spec:
         image: "{{ .Values.local.image.repository }}{{ with .Values.local.image.tag }}:{{ . }}{{ end }}{{ with .Values.local.image.digest }}@{{ . }}{{ end }}"
         imagePullPolicy: {{ .Values.local.image.pullPolicy }}
         ports:
-        - containerPort: {{ .Values.local.port }}
+        - containerPort: 5432
+          name: pgsql
         env:
         - name: PGDATA
           value: /var/lib/postgresql/data/pgdata

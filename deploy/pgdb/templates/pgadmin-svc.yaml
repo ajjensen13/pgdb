@@ -8,10 +8,11 @@ metadata:
     app.kubernetes.io/name: pgadmin-svc
     app.kubernetes.io/instance: {{ .Chart.AppVersion }}
 spec:
-  type: ClusterIP
+  type: LoadBalancer
   selector:
     app.kubernetes.io/name: pgadmin
     app.kubernetes.io/instance: {{ .Chart.AppVersion }}
   ports:
-  - port: 80
+  - port: {{ .Values.pgadmin.port }}
+    targetPort: http
 {{- end }}

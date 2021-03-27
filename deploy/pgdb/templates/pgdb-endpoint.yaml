@@ -12,4 +12,5 @@ subsets:
   - ip: {{ .Values.endpoint.ip }}
   ports:
   - port: {{ .Values.endpoint.port }}
+    name: cloudsql
 {{- end }}
