@@ -20,7 +20,6 @@ spec:
         app.kubernetes.io/name: pgdb
         app.kubernetes.io/instance: {{ .Chart.AppVersion }}
     spec:
-      priorityClassName: required-preempting-pc
       containers:
       - name: pgdb
         image: "{{ .Values.local.image.repository }}{{ with .Values.local.image.tag }}:{{ . }}{{ end }}{{ with .Values.local.image.digest }}@{{ . }}{{ end }}"
