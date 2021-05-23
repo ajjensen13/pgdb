@@ -43,15 +43,6 @@ spec:
         volumeMounts:
         - name: pgadmin-working-volume
           mountPath: /var/lib/pgadmin
-      priorityClassName: normal-nonpreempting-pc
-      affinity:
-        nodeAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-          - weight: 1
-            preference:
-              matchExpressions:
-              - key: cloud.google.com/gke-preemptible
-                operator: Exists
   volumeClaimTemplates:
   - metadata:
       name: pgadmin-working-volume
