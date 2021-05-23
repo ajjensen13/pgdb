@@ -18,5 +18,5 @@ helm upgrade --install pgdb deploy/pgdb --set proxy.create=true --set proxy.inst
 with private IP address for the cloud_sql instance.
 
 ```shell script
-helm upgrade --install pgdb deploy/pgdb --install --set endpoint.ip=<cloud_sql_private_ip> --set endpoint.create=true --set pgadmin.create=true --set pgadmin.image.pullPolicy=Always
+helm upgrade pgdb deploy/pgdb --install --set endpoint.ip=<cloud_sql_private_ip> --set endpoint.create=true --set pgadmin.create=true --set pgadmin.image.pullPolicy=Always
 ```
