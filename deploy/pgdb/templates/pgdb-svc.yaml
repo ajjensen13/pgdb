@@ -17,12 +17,13 @@ spec:
     targetPort: cloudsqlproxy
   {{- end }}
   {{- if .Values.local.create }}
-  type: LoadBalancer
+  type: NodePort
   selector:
     app.kubernetes.io/name: pgdb
     app.kubernetes.io/instance: {{ .Chart.AppVersion }}
   ports:
   - port: {{ .Values.local.port }}
+    nodePort: {{ .Values.local.port }}
     targetPort: pgsql
   {{- end }}
   {{- if .Values.endpoint.create }}

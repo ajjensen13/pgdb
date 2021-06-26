@@ -8,11 +8,14 @@ metadata:
     app.kubernetes.io/name: pgadmin-svc
     app.kubernetes.io/instance: {{ .Chart.AppVersion }}
 spec:
-  type: LoadBalancer
+  type: {{ if .Values.local.create }}NodePort{{ else }}LoadBalancer{{ end }}
   selector:
     app.kubernetes.io/name: pgadmin
     app.kubernetes.io/instance: {{ .Chart.AppVersion }}
   ports:
   - port: {{ .Values.pgadmin.port }}
+    {{- if .Values.local.create }}
+    nodePort: {{ .Values.pgadmin.port }}
+    {{- end }}
     targetPort: http
 {{- end }}
